@@ -3,31 +3,31 @@
 // Created by Grégoire JONCOUR on 07/04/2015.
 // Copyright (c) 2015 Grégoire JONCOUR. All rights reserved.
 //
-require '../app/Autoloader.php';
-\App\Autoloader::register();
+define('ROOT', dirname(__DIR__));
+require dirname(__DIR__)."/app/App.php";
+App::load();
 
 if(isset($_GET['p']))
 {
-    $p = $_GET['p'];
+    $page = $_GET['p'];
 }
 else
 {
-    $p = 'home';
+    $page = 'home';
 }
-
 
 ob_start();
-if($p === 'home')
+if($page === 'home')
 {
-    require '../pages/home.php';
+    require ROOT . '/pages/posts/home.php';
 }
-elseif ($p === 'article')
+elseif ($page === 'posts.category')
 {
-    require '../pages/single.php';
+    require ROOT . '/pages/posts/category.php';
 }
-elseif ($p === 'categorie')
+elseif ($page === 'posts.show')
 {
-    require '../pages/categorie.php';
+    require ROOT . '/pages/posts/show.php';
 }
 $content = ob_get_clean();
-require '../pages/template/default.php';
+require ROOT.'/pages/template/default.php';

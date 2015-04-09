@@ -3,38 +3,46 @@
 // Created by Grégoire JONCOUR on 08/04/2015.
 // Copyright (c) 2015 Grégoire JONCOUR. All rights reserved.
 //
-namespace App;
+use Core\Config;
+use Core\Database\MysqlDatabase;
+
 class App
 {
-    const DB_NAME = 'blog';
-    const DB_USER = 'root';
-    const DB_PASS = 'root';
-    const DB_HOST = 'localhost';
-    private static $database;
-    private static $title = 'Mon super site';
+    public $title = "Mon super site";
+    private $db_instance;
+    private static $_instance;
 
-    public static function getDb()
+    public static function getInstance()
     {
-        if(self::$database === null)
+        if(is_null(self::$_instance))
         {
-            self::$database = new Database(self::DB_NAME,self::DB_USER, self::DB_PASS, self::DB_HOST);
+            self::$_instance = new App();
         }
-        return self::$database;
+        return self::$_instance;
     }
 
-    public static function notFound()
+    public static function load()
     {
-        header("HTTP/1.0 404 Not Found");
-        header('Location:index.php?p=404');
+        session_start();
+        require ROOT.'/app/Autoloader.php';
+        App\Autoloader::register();
+        require ROOT.'/core/Autoloader.php';
+        Core\Autoloader::register();
     }
 
-    public static function getTitle()
+    public function getTable($name)
     {
-        return self::$title;
+        $class_name = '\\App\\Table\\'.ucfirst($name).'Table';
+        return new $class_name($this->getDb());
     }
 
-    public static function setTitle($title)
+    public function getDb()
     {
-        self::$title = $title.' | '.self::$title;
+        $config = Config::getInstance(ROOT.'/config/config.php');
+        if(is_null($this->db_instance))
+        {
+            $this->db_instance = new MysqlDatabase($config->get('db_name'), $config->get('db_user'), $config->get('db_pass'), $config->get('db_host'));
+        }
+        return $this->db_instance;
     }
 }
