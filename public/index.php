@@ -29,5 +29,9 @@ elseif ($page === 'posts.show')
 {
     require ROOT . '/pages/posts/show.php';
 }
+elseif ($page === 'login')
+{
+    require ROOT . '/pages/users/login.php';
+}
 $content = ob_get_clean();
 require ROOT.'/pages/template/default.php';
